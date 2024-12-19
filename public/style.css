@@ -1,0 +1,17 @@
+body {
+    background-color: #FFE9E9;
+}
+
+h1 {
+    text-align: center;
+}
+
+#addTaskButton {
+    background-color: #2c2c2c;
+    color: #f5f5f5;
+    font-size: 20px;
+    margin-left: 200px;
+}
+#addTaskButton:hover {
+    background-color: #1a1a1a;
+}
