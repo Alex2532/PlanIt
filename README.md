@@ -1,0 +1,3 @@
+index.html is the main page, where it features a button to add a new task, incomplete and complete labels signifying the status of each task, and sample tasks. 
+The checkboxes are not finished with styling and the tasks do not have a remove or edit button yet.
+None of the buttons have any functionality yet. 
