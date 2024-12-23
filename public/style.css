@@ -10,7 +10,7 @@ input[type="checkbox"]:checked {
     accent-color: #2c2c2c;
 }
 
-#incomplete-div label {
+#incomplete-div label, #complete-div label{
     margin-left: 1%;
 }
 
