@@ -6,34 +6,37 @@ var idNum = 0;
 document.addEventListener("DOMContentLoaded", function () {
     const size = localStorage.getItem("size");
     idNum = size;
+    if (idNum === null)
+    {
+        idNum = 0;
+    }
 
     for (let i = 0; i < size; i++) { 
         const jsonObject = JSON.parse(localStorage.getItem(i));
-        console.log(jsonObject);
         const id = jsonObject.idNumber;
         const text = jsonObject.text;
         const completed = jsonObject.completed;
 
         // create task and label
-        const task = createTask(id);
-        const label = createLabel(id, text);
+        const task = createTask(id, text);
+        checkbox = task.firstChild;
 
         if (completed) { // put in completed div
-            task.setAttribute('onclick', 'incomplete(this)');
-            task.checked = true;
+            checkbox.setAttribute('onclick', 'incomplete(this)');
+            checkbox.checked = true;
             const complete = document.getElementById('complete-div');
             complete.appendChild(task);
-            complete.appendChild(label);
             complete.appendChild(createBr(id));
             
         } else { // put in incomplete div
-            task.setAttribute('onclick', 'completed(this)');
+            checkbox.setAttribute('onclick', 'completed(this)');
             const incomplete = document.getElementById('incomplete-div');
             incomplete.appendChild(task);
-            incomplete.appendChild(label);
             incomplete.appendChild(createBr(id));
         }
     }
+
+    feather.replace();
 });
 
 // change add task button to text input when it is clicked
@@ -56,40 +59,59 @@ function addTaskClicked() {
     });
 }
 
-// add new task to incomplete using text input when the enter key is pressed
+// add new task to incomplete using text input when the enter key is pressed on the input field
 function addTask() {
     // create the checkbox and label for the new task
     const text = input.value;
-    const task =  createTask(idNum);
-    task.setAttribute('onclick', 'completed(this)');
-    label = createLabel(task.id, text);
+    const task =  createTask(idNum, text);
+    const checkbox = task.firstChild;
+    checkbox.setAttribute('onclick', 'completed(this)');
     // add to incomplete
     const incomplete = document.getElementById('incomplete-div');
     incomplete.appendChild(task);
-    incomplete.appendChild(label);
     incomplete.appendChild(createBr(idNum));
     
     // change input back to button
     input.replaceWith(button);
     idNum++;
+
+    // save task
+    const label = task.children[1];
     saveTask(task.id, label.innerHTML, false);
 }
 
 // creates a task checkbox
-function createTask(id) {
-    const task = document.createElement('input');
-    task.type = "checkbox";
+function createCheckbox(id) {
+    const checkbox = document.createElement('input');
+    checkbox.type = "checkbox";
+    checkbox.id = id + "checkbox";
+    checkbox.value = id + "checkbox";
+
+    return checkbox;
+}
+
+// creates a task span
+function createTask(id, text) {
+    const task = document.createElement('span');
     task.id = id;
-    task.value = id;
+    task.classList.add('task-span', 'border', 'rounded');
+
+    // checkbox, label, remove, and edit appending to the span
+    task.appendChild(createCheckbox(id));
+    task.appendChild(createLabel(id, text));
+    task.appendChild(createRemove(id));
+    task.appendChild(createEdit(id));
+
     return task;
 }
 
 // creates a label for the task
 function createLabel(id, text) {
     const label = document.createElement('label');
-    label.htmlFor = id;
+    label.htmlFor = id + "checkbox";
     label.id = id + "label";
     label.innerHTML = text;
+
     return label;
 }
 
@@ -100,47 +122,61 @@ function createBr(id) {
     return br;
 }
 
+// creates unique remove button
+function createRemove(id) {
+    const remove = document.createElement('i');
+    remove.setAttribute('data-feather', 'trash');
+    remove.id = id + "remove";
+    remove.classList.add('icon');
+    return remove;
+}
+
+// creates unique edit button
+function createEdit(id) {
+    const edit = document.createElement('i');
+    edit.setAttribute('data-feather', 'edit-2');
+    edit.id = id + "edit";
+    edit.classList.add('icon');
+    return edit;
+}
+
 // adds task to the completed div when checked
-function completed(task) {
+function completed(checkbox) {
     // remove from incomplete
     const incomplete = document.getElementById('incomplete-div');
-    const labelid = task.id + "label";
+    const task = checkbox.parentNode;
     const brid = task.id + "br";
-    label = document.getElementById(labelid);
     br = document.getElementById(brid);
     incomplete.removeChild(task);
-    incomplete.removeChild(label);
     incomplete.removeChild(br);
     // change the onclick attribute to incomplete()
-    task.setAttribute('onclick', 'incomplete(this)');
+    checkbox.setAttribute('onclick', 'incomplete(this)');
     // add to complete
     const complete = document.getElementById('complete-div');
     complete.appendChild(task);
-    complete.appendChild(label);
     complete.appendChild(br);
 
+    label = task.children[1];
     saveTask(task.id, label.innerHTML, true);
 }
 
 // adds task to the incomplete div when unchecked
-function incomplete(task) {
+function incomplete(checkbox) {
     // remove from complete
     const complete = document.getElementById('complete-div');
-    const labelid = task.id + "label";
+    task = checkbox.parentNode;
     const brid = task.id + "br";
-    label = document.getElementById(labelid);
     br = document.getElementById(brid);
     complete.removeChild(task);
-    complete.removeChild(label);
     complete.removeChild(br);
     // change the onclick to complete()
-    task.setAttribute('onclick', 'completed(this)');
+    checkbox.setAttribute('onclick', 'completed(this)');
     // add to incomplete
     const incomplete = document.getElementById('incomplete-div');
     incomplete.appendChild(task);
-    incomplete.appendChild(label);
     incomplete.appendChild(br);
 
+    label = task.children[1];
     saveTask(task.id, label.innerHTML, false);
 }
 
@@ -153,8 +189,7 @@ function saveTask(id, text, completed) {
     };
 
     localStorage.setItem(id, JSON.stringify(jsonObject));
-    console.log(localStorage.getItem(id));
-
     localStorage.setItem("size", idNum);
-    console.log(localStorage.getItem("size"));
+
+    feather.replace();
 }

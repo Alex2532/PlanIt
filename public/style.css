@@ -10,7 +10,25 @@ input[type="checkbox"]:checked {
     accent-color: #2c2c2c;
 }
 
-#incomplete-div label, #complete-div label{
+.status-label {
+    text-align: center;
+    color: #767676;
+    font-size: 20px;
+}
+
+.task-span {
+    display: block;
+    align-items: center;
+}
+
+.icon {
+    float: right;
+    margin-left: 2%;
+    width: 21px;
+    height: 21px;
+}
+
+#incomplete-div label, #complete-div label {
     margin-left: 1%;
 }
 
@@ -26,12 +44,6 @@ input[type="checkbox"]:checked {
 #main-div {
     margin-left: 10%;
     margin-right: 10%;
-}
-
-.status-label {
-    text-align: center;
-    color: #767676;
-    font-size: 20px;
 }
 
 #new-task-input {

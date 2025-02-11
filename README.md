@@ -6,6 +6,10 @@ Tasks can be added with the button add task, which is explained in the buttons s
 ### Buttons:
 #### Add Task:
 Once clicked, the button changes to an input text field where the user can type in their new task. Once the user has typed their task, they will press enter to add their task to the incomplete category. 
+#### Edit:
+Currently no functionality. When the edit button is cliced, the user can change their task with a provided textbox.
+#### Remove:
+Currently no functionality. When the remove button is clicked, the task will be removed from storage and interface.
 
 ## Storage:
 Tasks are stored locally with localStorage. When the page loads, tasks will be put into the correct spot and will be checked or unchecked based on how they were left. 
