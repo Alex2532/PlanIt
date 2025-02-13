@@ -2,43 +2,21 @@ var button;
 var input;
 var idNum = 0;
 
+// region Document Load
+//-----------------------------------------------------------------------------------------------------//
+
 // when the document loads, it needs to put in all the tasks that were saved
 document.addEventListener("DOMContentLoaded", function () {
-    const size = localStorage.getItem("size");
-    idNum = size;
-    if (idNum === null)
-    {
-        idNum = 0;
-    }
-
-    for (let i = 0; i < size; i++) { 
-        const jsonObject = JSON.parse(localStorage.getItem(i));
-        const id = jsonObject.idNumber;
-        const text = jsonObject.text;
-        const completed = jsonObject.completed;
-
-        // create task and label
-        const task = createTask(id, text);
-        checkbox = task.firstChild;
-
-        if (completed) { // put in completed div
-            checkbox.setAttribute('onclick', 'incomplete(this)');
-            checkbox.checked = true;
-            const complete = document.getElementById('complete-div');
-            complete.appendChild(task);
-            complete.appendChild(createBr(id));
-            
-        } else { // put in incomplete div
-            checkbox.setAttribute('onclick', 'completed(this)');
-            const incomplete = document.getElementById('incomplete-div');
-            incomplete.appendChild(task);
-            incomplete.appendChild(createBr(id));
-        }
-    }
+    createSavedTasks();
 
     feather.replace();
 });
 
+//-----------------------------------------------------------------------------------------------------//
+// endregion
+
+// region Add Task Button
+//-----------------------------------------------------------------------------------------------------//
 // change add task button to text input when it is clicked
 function addTaskClicked() {
     button = document.getElementById("add-task-button");
@@ -79,17 +57,11 @@ function addTask() {
     const label = task.children[1];
     saveTask(task.id, label.innerHTML, false);
 }
+//-----------------------------------------------------------------------------------------------------//
+// end region
 
-// creates a task checkbox
-function createCheckbox(id) {
-    const checkbox = document.createElement('input');
-    checkbox.type = "checkbox";
-    checkbox.id = id + "checkbox";
-    checkbox.value = id + "checkbox";
-
-    return checkbox;
-}
-
+// region Task Creation
+//-----------------------------------------------------------------------------------------------------//
 // creates a task span
 function createTask(id, text) {
     const task = document.createElement('span');
@@ -103,6 +75,16 @@ function createTask(id, text) {
     task.appendChild(createEdit(id));
 
     return task;
+}
+
+// creates a task checkbox
+function createCheckbox(id) {
+    const checkbox = document.createElement('input');
+    checkbox.type = "checkbox";
+    checkbox.id = id + "checkbox";
+    checkbox.value = id + "checkbox";
+
+    return checkbox;
 }
 
 // creates a label for the task
@@ -128,6 +110,7 @@ function createRemove(id) {
     remove.setAttribute('data-feather', 'trash');
     remove.id = id + "remove";
     remove.classList.add('icon');
+    remove.setAttribute('onclick', 'removeTask(this)');
     return remove;
 }
 
@@ -137,9 +120,14 @@ function createEdit(id) {
     edit.setAttribute('data-feather', 'edit-2');
     edit.id = id + "edit";
     edit.classList.add('icon');
+    edit.setAttribute('onclick', 'editTask(this)');
     return edit;
 }
+//-----------------------------------------------------------------------------------------------------//
+// endregion
 
+// region Task Actions
+//-----------------------------------------------------------------------------------------------------//
 // adds task to the completed div when checked
 function completed(checkbox) {
     // remove from incomplete
@@ -180,6 +168,60 @@ function incomplete(checkbox) {
     saveTask(task.id, label.innerHTML, false);
 }
 
+// removes task from list and localstorage
+function removeTask(button) {
+    const task = button.parentNode;
+    br = document.getElementById(task.id + 'br');
+    task.parentNode.removeChild(br);
+    task.parentNode.removeChild(task);
+    localStorage.removeItem(task.id);
+}
+
+//-----------------------------------------------------------------------------------------------------//
+// endregion
+
+// region Local Storage Tasks
+//-----------------------------------------------------------------------------------------------------//
+
+// creates the saved tasks when the document loads
+function createSavedTasks() {
+    // localStorage.clear();
+    const size = localStorage.getItem("size");
+    idNum = size;
+    if (idNum === null)
+    {
+        idNum = 0;
+    }
+
+    for (let i = 0; i < size; i++) { 
+        const jsonObject = JSON.parse(localStorage.getItem(i));
+        if (jsonObject == null) {
+            continue;
+        }
+        const id = jsonObject.idNumber;
+        const text = jsonObject.text;
+        const completed = jsonObject.completed;
+
+        // create task and label
+        const task = createTask(id, text);
+        checkbox = task.firstChild;
+
+        if (completed) { // put in completed div
+            checkbox.setAttribute('onclick', 'incomplete(this)');
+            checkbox.checked = true;
+            const complete = document.getElementById('complete-div');
+            complete.appendChild(task);
+            complete.appendChild(createBr(id));
+            
+        } else { // put in incomplete div
+            checkbox.setAttribute('onclick', 'completed(this)');
+            const incomplete = document.getElementById('incomplete-div');
+            incomplete.appendChild(task);
+            incomplete.appendChild(createBr(id));
+        }
+    }
+}
+
 // saves task into local storage
 function saveTask(id, text, completed) {
     const jsonObject = {
@@ -193,3 +235,6 @@ function saveTask(id, text, completed) {
 
     feather.replace();
 }
+
+//-----------------------------------------------------------------------------------------------------//
+// endregion

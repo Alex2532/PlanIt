@@ -28,6 +28,10 @@ input[type="checkbox"]:checked {
     height: 21px;
 }
 
+.icon:hover {
+    color: #565656;
+}
+
 #incomplete-div label, #complete-div label {
     margin-left: 1%;
 }
