@@ -171,10 +171,31 @@ function incomplete(checkbox) {
 // removes task from list and localstorage
 function removeTask(button) {
     const task = button.parentNode;
-    br = document.getElementById(task.id + 'br');
+    let br = document.getElementById(task.id + 'br');
     task.parentNode.removeChild(br);
     task.parentNode.removeChild(task);
     localStorage.removeItem(task.id);
+}
+
+// allows the user to edit an already made task
+function editTask(button) {
+    const task = button.parentNode;
+    label = task.children[1];
+    label.setAttribute('contenteditable', 'true'); 
+    label.htmlFor = "";
+
+    // make it so that the enter button saves the task and is noneditable
+    label.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+
+            label.setAttribute('contenteditable', 'false');
+            label.htmlFor = task.id + "checkbox";
+
+            const completed = JSON.parse(localStorage.getItem(task.id)).completed;
+            saveTask(task.id, label.innerHTML, completed);
+        }
+    });
 }
 
 //-----------------------------------------------------------------------------------------------------//
