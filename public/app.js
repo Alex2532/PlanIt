@@ -8,8 +8,6 @@ var idNum = 0;
 // when the document loads, it needs to put in all the tasks that were saved
 document.addEventListener("DOMContentLoaded", function () {
     createSavedTasks();
-
-    feather.replace();
 });
 
 //-----------------------------------------------------------------------------------------------------//
@@ -206,20 +204,16 @@ function editTask(button) {
 
 // creates the saved tasks when the document loads
 function createSavedTasks() {
-    // localStorage.clear();
     const size = localStorage.getItem("size");
-    idNum = size;
-    if (idNum === null)
-    {
-        idNum = 0;
-    }
 
     for (let i = 0; i < size; i++) { 
         const jsonObject = JSON.parse(localStorage.getItem(i));
         if (jsonObject == null) {
             continue;
         }
-        const id = jsonObject.idNumber;
+
+        localStorage.removeItem(i); // removes old jsonObject in case the new IDNumber is over the total number of tasks
+        const id = idNum; // uses the new id to condense id numbers
         const text = jsonObject.text;
         const completed = jsonObject.completed;
 
@@ -240,6 +234,9 @@ function createSavedTasks() {
             incomplete.appendChild(task);
             incomplete.appendChild(createBr(id));
         }
+
+        idNum++; // increases the new ID for the next avaiable task
+        saveTask(id, text, completed); // makes sure the task is saved under the new id
     }
 }
 
