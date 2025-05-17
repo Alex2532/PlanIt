@@ -9,7 +9,12 @@
         <h1>Your To-Do List</h1>
 
         <div id="main-div">
-            <button id="add-task-button" class="btn btn-primary btn-sm" onclick="addTaskClicked()">Add Task</button>
+            
+            <div id="account-handling-div">
+                <button id="account-button" class="btn btn-sm buttons" onclick="displayModal()">Sign In/Sign Up</button>
+            </div>
+
+            <button id="add-task-button" class="btn btn-sm buttons" onclick="addTaskClicked()">Add Task</button>
             <br>
             <br>
             <p class="status-label" id="incomplete">Incomplete</p>
@@ -21,7 +26,24 @@
             <div id="complete-div"></div>
         </div>
 
+        <div id="sign-in-modal" class="modal">
+            <div id="sign-in-content" class="modal-content">
+                <span id="modal-close" onclick="closeModal()">&times</span>
+                <div id="email-pswd">
+                    <input id="email-input" type="text" placeholder="email"> <br>
+                    <input id="pswd-input" type="password" placeholder="password">
+                </div>
+                <div id="modal-buttons">
+                    <button id="sign-up-button" class="btn btn-sm buttons" onclick="signUp()">Sign Up</button>
+                    <button id="sign-in-button" class="btn btn-sm buttons" onclick="signIn()">Sign In</button>
+                </div>
+            </div>
+        </div>
+
+
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.2/feather.js" integrity="sha512-pcEE/+4FGKmBV9n5aZletM/txLYSKNu5+jUM7+R0oaTyrcXzlYbYDSP20k/kjfcEWVkqhm3qu4XsQwrhRbxpZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
         <script src="app.js"></script>
     </body>
 </html>

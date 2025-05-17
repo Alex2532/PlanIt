@@ -6,19 +6,117 @@ h1 {
     text-align: center;
 }
 
+h3 {
+    text-align: center;
+}
+
 input[type="checkbox"]:checked {
     accent-color: #2c2c2c;
 }
 
-.status-label {
+#main-div {
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+#account-handling-div {
+    text-align: right;
+}
+
+
+/* modals */
+.modal {
+    display: none; 
+    position: fixed;  
+    z-index: 1; 
+    padding-top: 200px; 
+    padding-left: 20px; 
+    padding-right: 20px; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
+}
+
+#sign-in-modal {
+    padding-right: 300px;
+    padding-left: 300px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    width: 80%;
+}
+
+#email-pswd {
     text-align: center;
-    color: #767676;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+#email-input {
+    margin-bottom: 10px;
+}
+
+#modal-close {
+    color: #aaaaaa;
+    text-align: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* buttons */
+.buttons {
+    background-color: #2c2c2c;
+    color: #f5f5f5;
     font-size: 20px;
 }
 
+.buttons:hover {
+    background-color: #1a1a1a;
+    color: #f5f5f5;
+}
+
+.buttons:active {
+    background-color: #2a3b4c;;
+}
+
+#modal-buttons {
+    text-align: center;
+}
+
+#sign-up-button {
+    margin-right: 30px;
+}
+
+#sign-up-message-div {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#sign-up-message-div {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #ff8800;
+}
+
+#understand-button-div {
+    text-align: center;
+}
+
+/* tasks */
 .task-span {
     display: block;
     align-items: center;
+}
+
+#incomplete-div label, #complete-div label {
+    margin-left: 1%;
 }
 
 .icon {
@@ -32,22 +130,10 @@ input[type="checkbox"]:checked {
     color: #565656;
 }
 
-#incomplete-div label, #complete-div label {
-    margin-left: 1%;
-}
-
-#add-task-button {
-    background-color: #2c2c2c;
-    color: #f5f5f5;
+.status-label {
+    text-align: center;
+    color: #767676;
     font-size: 20px;
-}
-#add-task-button:hover {
-    background-color: #1a1a1a;
-}
-
-#main-div {
-    margin-left: 10%;
-    margin-right: 10%;
 }
 
 #new-task-input {

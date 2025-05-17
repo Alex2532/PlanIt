@@ -1,6 +1,154 @@
 var button;
 var input;
 var idNum = 0;
+var signedIn = false;
+var currentUser;
+
+// region Account Handling
+//-----------------------------------------------------------------------------------------------------//
+
+const supabaseClient = supabase.createClient(
+    'https://xxinlznoofinrkqjlano.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aW5sem5vb2ZpbnJrcWpsYW5vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY2Mzg2MjgsImV4cCI6MjA2MjIxNDYyOH0.c9sI7G0K3dt75j2TamPTzXqyicfSc_Tv-N1Oik46X8c'
+);
+
+// for signup and signin, save the current user to reduce api calls for actions
+
+async function signUp() {
+    const email = document.getElementById("email-input").value;
+    const password = document.getElementById("pswd-input").value;
+    const { data, error } = await supabaseClient.auth.signUp({
+        email: email,
+        password: password
+    });
+
+    if (error) {
+        console.log('Error', error.message);
+    }
+    else {
+        console.log('Successfully signed up:', data);
+        // added for security, because supabase marks new sign ups as "successful" even if the user is already in the system
+        console.log(error);
+        onSignUp();
+    }
+}
+
+// elements needed in the next 2 functions
+var emailPass;
+var modBtns;
+var modalContent;
+var header;
+var messageDiv;
+var btnDiv;
+var btn;
+
+function onSignUp() {
+    // change the modal content so that it displays the message and an "I understand" button
+    // store originial content
+    emailPass = document.getElementById("email-pswd");
+    modBtns = document.getElementById("modal-buttons");
+    // delete unwanted elements
+    modalContent = document.getElementById("sign-in-content");
+    modalContent.removeChild(emailPass);
+    modalContent.removeChild(modBtns);
+    // create and display message
+    header = document.createElement('h3');
+    header.id = 'sign-up-message-header';
+    header.innerHTML = "Heads Up!"
+    modalContent.appendChild(header);
+
+    messageDiv = document.createElement('div');
+    messageDiv.id = 'sign-up-message-div'
+    messageDiv.innerHTML = "If this is your first time signing up, check your inbox for a confirmation email. If you've signed up before, just log in instead.";
+    modalContent.appendChild(messageDiv);
+    // create and display button
+    btnDiv = document.createElement('div');
+    btnDiv.id = 'understand-button-div';
+    btn = document.createElement('button');
+    btn.setAttribute('onclick', 'understand()');
+    btn.className = "btn btn-sm buttons";
+    btn.innerHTML = "I understand";
+    btnDiv.appendChild(btn);
+    modalContent.appendChild(btnDiv);
+}
+
+function understand() {
+    modalContent.removeChild(header);
+    modalContent.removeChild(messageDiv);
+    modalContent.removeChild(btnDiv);
+    modalContent.removeChild(btn);
+
+    modalContent.appendChild(emailPass);
+    modalContent.appendChild(modBtns);
+}
+
+async function signIn() {
+    const email = document.getElementById("email-input").value;
+    const password = document.getElementById("pswd-input").value;
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+    });
+
+    if (error) {
+        console.log('Error', error.message);
+    }
+    else {
+        console.log('Successfully signed in:', data);
+        currentUser = data.user;
+        signedIn = true;
+        onSignIn();
+    }
+}
+
+function onSignIn() { // what happens after a successful sign in 
+    closeModal();
+
+    // change button from sign up/sign in to logout
+    const button = document.getElementById("account-button");
+    button.innerHTML = "Log out";
+    button.setAttribute("onclick", "logOut()");
+}
+
+function displayModal() {
+    const modal = document.getElementById("sign-in-modal");
+
+    modal.style.display = "block";
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById("sign-in-modal");
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+function closeModal() {
+    const modal = document.getElementById("sign-in-modal");
+
+    modal.style.display = "none";
+}
+
+async function logOut() {
+    var { error } = await supabaseClient.auth.signOut();
+
+    if (error) {
+        console.log('Error', error.message);
+    }
+    else {
+        console.log('Successfully logged out');
+        currentUser = null;
+        signedIn = false;
+    }
+
+    // change logout button back to sign in/sign up
+    const button = document.getElementById("account-button");
+    button.innerHTML = "Sign In/Sign Up";
+    button.setAttribute("onclick", "displayModal()");
+}
+
+//-----------------------------------------------------------------------------------------------------//
+// endregion
 
 // region Document Load
 //-----------------------------------------------------------------------------------------------------//
@@ -8,7 +156,18 @@ var idNum = 0;
 // when the document loads, it needs to put in all the tasks that were saved
 document.addEventListener("DOMContentLoaded", function () {
     createSavedTasks();
+
+    checkSignIn();
 });
+
+async function checkSignIn() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (user != null) {
+        currentUser = user;
+        signedIn = true;
+        onSignIn();
+    }
+}
 
 //-----------------------------------------------------------------------------------------------------//
 // endregion
@@ -53,7 +212,12 @@ function addTask() {
 
     // save task
     const label = task.children[1];
-    saveTask(task.id, label.innerHTML, false);
+    if (signedIn) {
+        insertTaskSupa(task.id, label.innerHTML, false);
+    } else {
+        saveTaskLocal(task.id, label.innerHTML, false);
+    }
+    
 }
 //-----------------------------------------------------------------------------------------------------//
 // end region
@@ -143,7 +307,7 @@ function completed(checkbox) {
     complete.appendChild(br);
 
     label = task.children[1];
-    saveTask(task.id, label.innerHTML, true);
+    saveTaskLocal(task.id, label.innerHTML, true);
 }
 
 // adds task to the incomplete div when unchecked
@@ -163,7 +327,7 @@ function incomplete(checkbox) {
     incomplete.appendChild(br);
 
     label = task.children[1];
-    saveTask(task.id, label.innerHTML, false);
+    saveTaskLocal(task.id, label.innerHTML, false);
 }
 
 // removes task from list and localstorage
@@ -191,7 +355,7 @@ function editTask(button) {
             label.htmlFor = task.id + "checkbox";
 
             const completed = JSON.parse(localStorage.getItem(task.id)).completed;
-            saveTask(task.id, label.innerHTML, completed);
+            saveTaskLocal(task.id, label.innerHTML, completed);
         }
     });
 }
@@ -199,7 +363,7 @@ function editTask(button) {
 //-----------------------------------------------------------------------------------------------------//
 // endregion
 
-// region Local Storage Tasks
+// region Local Storage
 //-----------------------------------------------------------------------------------------------------//
 
 // creates the saved tasks when the document loads
@@ -236,12 +400,12 @@ function createSavedTasks() {
         }
 
         idNum++; // increases the new ID for the next avaiable task
-        saveTask(id, text, completed); // makes sure the task is saved under the new id
+        saveTaskLocal(id, text, completed); // makes sure the task is saved under the new id
     }
 }
 
 // saves task into local storage
-function saveTask(id, text, completed) {
+function saveTaskLocal(id, text, completed) {
     const jsonObject = {
         "idNumber" : id,
         "text" : text,
@@ -252,6 +416,41 @@ function saveTask(id, text, completed) {
     localStorage.setItem("size", idNum);
 
     feather.replace();
+}
+
+//-----------------------------------------------------------------------------------------------------//
+// endregion
+
+// region Supabase
+//-----------------------------------------------------------------------------------------------------//
+async function insertTaskSupa(sort_order, text, completed) {
+
+    const { data, error } = await supabaseClient
+        .from('tasks')
+        .insert([{ task: text, user_id: currentUser.id, is_complete: completed, sort_order: sort_order }])
+        .select();
+
+    if (error) {
+        console.error('Insert error:', error.message);
+    } else {
+        console.log('Task added:', data);
+        console.log('error: ', error);
+    }
+}
+
+async function deleteTaskSupa(sort_order) {
+
+    const { error } = await supabaseClient
+        .from('tasks')
+        .delete()
+        .eq('user_id', currentUser.id)
+        .eq('sort_order', sort_order);
+
+    if (error) {
+        console.error('Deletion error:', error.message);
+    } else {
+        console.log('Task deleted');
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------//
