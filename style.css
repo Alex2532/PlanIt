@@ -55,12 +55,18 @@ input[type="checkbox"]:checked {
 
 #email-pswd {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     margin-top: 20px;
 }
 
 #email-input {
     margin-bottom: 10px;
+}
+
+#login-error {
+    color: red;
+    display: none;
+    text-align: center;
 }
 
 #modal-close {
@@ -88,25 +94,11 @@ input[type="checkbox"]:checked {
 
 #modal-buttons {
     text-align: center;
+    margin-top: 10px;
 }
 
 #sign-up-button {
     margin-right: 30px;
-}
-
-#sign-up-message-div {
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-#sign-up-message-div {
-    text-align: center;
-    margin-bottom: 10px;
-    color: #ff8800;
-}
-
-#understand-button-div {
-    text-align: center;
 }
 
 /* tasks */

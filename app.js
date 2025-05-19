@@ -24,62 +24,14 @@ async function signUp() {
 
     if (error) {
         console.log('Error', error.message);
+        loginError(error.message);
     }
     else {
         console.log('Successfully signed up:', data);
         // added for security, because supabase marks new sign ups as "successful" even if the user is already in the system
         console.log(error);
-        onSignUp();
+        onSignIn();
     }
-}
-
-// elements needed in the next 2 functions
-var emailPass;
-var modBtns;
-var modalContent;
-var header;
-var messageDiv;
-var btnDiv;
-var btn;
-
-function onSignUp() {
-    // change the modal content so that it displays the message and an "I understand" button
-    // store originial content
-    emailPass = document.getElementById("email-pswd");
-    modBtns = document.getElementById("modal-buttons");
-    // delete unwanted elements
-    modalContent = document.getElementById("sign-in-content");
-    modalContent.removeChild(emailPass);
-    modalContent.removeChild(modBtns);
-    // create and display message
-    header = document.createElement('h3');
-    header.id = 'sign-up-message-header';
-    header.innerHTML = "Heads Up!"
-    modalContent.appendChild(header);
-
-    messageDiv = document.createElement('div');
-    messageDiv.id = 'sign-up-message-div'
-    messageDiv.innerHTML = "If this is your first time signing up, check your inbox for a confirmation email. If you've signed up before, just log in instead.";
-    modalContent.appendChild(messageDiv);
-    // create and display button
-    btnDiv = document.createElement('div');
-    btnDiv.id = 'understand-button-div';
-    btn = document.createElement('button');
-    btn.setAttribute('onclick', 'understand()');
-    btn.className = "btn btn-sm buttons";
-    btn.innerHTML = "I understand";
-    btnDiv.appendChild(btn);
-    modalContent.appendChild(btnDiv);
-}
-
-function understand() {
-    modalContent.removeChild(header);
-    modalContent.removeChild(messageDiv);
-    modalContent.removeChild(btnDiv);
-    modalContent.removeChild(btn);
-
-    modalContent.appendChild(emailPass);
-    modalContent.appendChild(modBtns);
 }
 
 async function signIn() {
@@ -92,6 +44,7 @@ async function signIn() {
 
     if (error) {
         console.log('Error', error.message);
+        loginError(error.message);
     }
     else {
         console.log('Successfully signed in:', data);
@@ -102,12 +55,20 @@ async function signIn() {
 }
 
 function onSignIn() { // what happens after a successful sign in 
+    const error = document.getElementById("login-error");
+    error.style.display = "none";
     closeModal();
 
     // change button from sign up/sign in to logout
     const button = document.getElementById("account-button");
     button.innerHTML = "Log out";
     button.setAttribute("onclick", "logOut()");
+}
+
+function loginError(msg) {
+    const error = document.getElementById("login-error");
+    error.innerHTML = msg;
+    error.style.display = "block";
 }
 
 function displayModal() {
