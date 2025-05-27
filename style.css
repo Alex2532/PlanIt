@@ -42,8 +42,8 @@ input[type="checkbox"]:checked {
 }
 
 #sign-in-modal {
-    padding-right: 300px;
-    padding-left: 300px;
+    padding-right: 10%;
+    padding-left: 10%;
 }
 
 .modal-content {
