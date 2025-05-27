@@ -30,7 +30,7 @@ PlanIt was created as a part of a personal learning effort to deepen my understa
 - Tasks are secured using a user id, which is linked to Supabase's authentication. This ensures that the user's tasks are isolated and only accessible after the user logs into their account. 
 
 ## Tools Used
-- Supabase for 
+- Supabase for user authentication and database management. 
 
 ## Future Considerations
 This project was built as a way to practice and strengthen my development skills. If developed further, there are a few features I would like to add.
