@@ -1,5 +1,8 @@
 # PlanIt 
 
+## Note
+Due to inactivity, the Supabase database has been deactivated. However, tasks can still be stored locally, if needed. 
+
 ## About This Project
 PlanIt was created as a part of a personal learning effort to deepen my understanding of frontend development, user authentication, and cloud-based storage. 
 
